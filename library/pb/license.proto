@@ -1,0 +1,165 @@
+syntax = "proto3";
+
+package go_common.v1;
+
+option go_package = "./;fpb";
+
+message LicenseData {
+  string organ_name = 1; // 企业名称
+  int64 app_count = 2; // 可创建的小程序数量上限
+  int64 coo_app_count = 3; // 可创建的应用数量上限
+  int64 review_organ_count = 4; // 可认证通过的企业数量
+  int64 expire_time = 5; // 服务有效期
+  int64 bundle_id_count = 6; // bundleId全局数量限制
+  bool create_oper_admin_by_init_server = 7; // 通过初始化服务器创建运营管理员【已废弃】
+  bool open_whitelist_domain = 8; // 开放白名单域
+  bool organ_status_never_expire = 9; // 组织过期状态永不过期
+  bool open_app_search = 10; // 小程序搜索
+  bool open_api_manage = 11; // API、自定义菜单管理
+  repeated string url_blacklist = 12; // URL黑名单
+  bool open_apm = 13; // 开通应用性能监控
+  int64 app_gray_count = 14; // 每个小程序可以同时运行的灰度的数量
+  int64 rate_limit = 15; // qps限制
+  string domain = 16; // 企业域名
+  bool is_windows = 17; // 操作系统支持 windows
+  bool is_linux = 18; // 操作系统支持 linux
+  bool is_mac = 19; // 操作系统支持 mac
+  bool is_ios = 20; // 操作系统支持 ios
+  bool is_android = 21; // 操作系统支持 android
+  bool is_harmony = 22; // 操作系统支持 harmony
+  bool is_configuration = 23; // 是否SDK需要调用SDK config接口
+  bool is_mini_game = 24; // 小游戏
+  bool is_mini_html = 25; // 离线H5
+  bool is_custom_logo = 26; // 自定义LOGO(UI)
+  bool is_h5_convert = 27; // H5预览,小程序转H5
+  bool is_api_cover = 28; // API覆盖
+  bool is_third_party = 29; // 关联第三方社交平台,发布
+  bool is_data_analyse = 30; // 数据分析
+  bool is_low_code = 31; // 低代码
+  bool is_mini_app_template = 32; // 小程序模板
+  // @gotags: json:"isEQXiu" form:"isEQXiu"
+  bool is_eqxiu = 33; // 易企秀
+  // @gotags: json:"isALD" form:"isALD"
+  bool is_ald = 34; // 阿拉丁
+  bool is_mini_plugin = 35; // 小程序插件市场
+  bool is_mini_share = 36; // 小程序分享
+  bool is_multi_tenant = 37; // 多租户
+  bool is_clip_trix = 38; // 低功耗
+  bool is_open_id = 39; // 统一账户认证
+  bool is_server_open_api = 40; // 服务端开放API
+  bool is_favorite = 41; // 小程序收藏
+  bool is_itai = 42; // 信创
+  bool is_location = 43; // 地图与定位
+  bool is_message_publish = 44; // 消息推送
+  bool is_payment = 45; // 支付能力
+  bool is_recommend = 46; // 小程序推荐
+  // @gotags: json:"isECOManager" form:"isECOManager"
+  bool is_eco_manager = 47; // 生态管理
+  bool is_server_less = 48; // 云开发
+  bool is_live = 49; // 直播能力
+  bool is_mini_component = 50; // 小组件
+  bool is_backend = 51; // 管理后台
+  bool is_app_gray = 52; // 灰度发布
+  bool is_all_qrcode = 53; // 一码通
+  bool is_mini_ai = 54; // AI对接
+  bool is_audit_flow = 55; // 审核工作流
+  bool is_system_ticket = 56; // 系统工单
+  bool is_system_security = 57; // 系统安全管理
+  string license_type = 58; // 授权类型
+  repeated string clients = 59; // 支持的客户端
+  int64 device_num = 60; // 设备数量
+  int64 app_store_num = 61; // 应用商店数量
+  int64 total_api_num = 62; // 总API数量
+  bool is_exceeding = 63; // 是否超限
+  string desc = 64; // 描述
+  string enc_type = 65; // 加密方式
+  string channel = 66; // 渠道
+  bool has_active_ext_resource = 67;
+}
+
+message ListExtLicenseHistoryResp {
+  repeated ExtLicenseResource active_items = 1; // 特殊qps历史记录
+  repeated ExtLicenseResource expired_items = 2; // 特殊qps历史记录
+}
+
+message UpdateExtLicenseReq {
+  string content = 1;
+}
+
+message CheckExtLicenseResp {
+  repeated ExtLicenseResource items = 1;
+  string hash = 2;
+}
+
+message ExtLicenseResource {
+  string resource_type = 1;
+  int64 resource_value = 2; // 值
+  int64 resource_start_time = 3; // 有效时间
+  int64 resource_expired = 4; // 过期时间
+}
+
+message UpdateLicenseReq {
+  string license_str = 1; // license 加密字符串
+}
+
+message CheckLicenseRsp {
+  bool is_valid = 1; // license 是否有效
+  int64 expire_time = 2; // license 过期时间
+}
+
+message CheckLicenseReq {
+  string license_str = 1; // license 加密字符串
+}
+
+message LicenseEncryptResp {
+  string license_encrypt_str = 1;
+}
+
+message CheckLicenseNumRsp {
+  CheckMiniAppLicenseItemDesc mini_app = 1; // 小程序数量校验信息
+  CheckLicenseItemDesc host_app = 2; // 应用数量校验信息
+  CheckBundleLicenseItemDesc bundle = 3; // bundleId数量校验信息
+  CheckLicenseItemDesc dev_organ = 4; // 企业数量校验信息
+}
+
+message CheckMiniAppLicenseItemDesc {
+  bool is_valid = 1; // 是否有效
+  string invalid_desc = 2; // 禁止更新的描述
+  repeated MiniAppProjectType new_license_disable_but_exist_project_types = 3; // 新license禁用了，但是系统里面存在对应类型的小程序
+  int64 should_disable_count = 4; // 应该禁用的数量
+}
+
+message CheckBundleLicenseItemDesc {
+  bool is_valid = 1; // 是否有效
+  string invalid_desc = 2; // 禁止更新的描述
+  repeated BundlePlatform new_license_disable_but_exist_bundle_platform = 3; // 新license禁用了，但是系统里面存在对应类型的bundle
+  int64 should_disable_count = 4; // 应该禁用的数量
+}
+
+message CheckLicenseItemDesc {
+  bool is_valid = 1; // 是否有效
+  string invalid_desc = 2; // 禁止更新的描述
+  int64 should_disable_count = 3; // 应该禁用的数量
+}
+
+enum MiniAppProjectType {
+  MINI_APP_PROJECT_TYPE_UNKNOWN = 0;
+  MINI_APP_PROJECT_TYPE_MINI_APP = 1; // 小程序
+  MINI_APP_PROJECT_TYPE_MINI_GAME = 2; // 小游戏
+  MINI_APP_PROJECT_TYPE_H5 = 3; // h5
+  MINI_APP_PROJECT_MINI_COMPONENT = 4; // 小组件
+  MINI_APP_PROJECT_TYPE_CLIP_TRIX = 5; // 低功耗
+}
+
+enum BundlePlatform {
+  BUNDLE_PLATFORM_UNKNOWN = 0;
+  BUNDLE_PLATFORM_IOS = 1; // ios
+  BUNDLE_PLATFORM_ANDROID = 2; // android
+  BUNDLE_PLATFORM_ANDROID_IOS = 3; // android和ios通用
+  BUNDLE_PLATFORM_WINDOWS = 4; // windows
+  BUNDLE_PLATFORM_HARMONY = 5; // harmony
+}
+
+message GetUpdateLicenseExpireTimeRsp {
+  int64 expire_time = 1;// 过期时间
+}

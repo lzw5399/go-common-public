@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package go_common.v1;
+
+option go_package = "./;fpb";
+
+enum Platform {
+  PLATFORM_UNKNOWN = 0;
+  PLATFORM_DEV = 1;
+  PLATFORM_OPER = 2;
+}
+
+message PingResp {
+  string version = 1;
+}
