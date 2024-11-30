@@ -38,7 +38,6 @@ require (
 	github.com/tjfoc/gmsm v1.4.1
 	github.com/xdg-go/scram v1.1.2
 	github.com/yitter/idgenerator-go v1.3.3
-	gitlab.finogeeks.club/finclip-cloud/gorm-driver-dm v0.1.45
 	golang.org/x/text v0.18.0
 	google.golang.org/grpc v1.54.0
 	google.golang.org/protobuf v1.35.1
@@ -99,7 +98,6 @@ require (
 	github.com/eapache/go-resiliency v1.1.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20180814174437-776d5712da21 // indirect
 	github.com/eapache/queue v1.1.0 // indirect
-	github.com/emirpasic/gods v1.12.0 // indirect
 	github.com/esimonov/ifshort v1.0.4 // indirect
 	github.com/ettle/strcase v0.1.1 // indirect
 	github.com/fatih/color v1.15.0 // indirect
@@ -248,7 +246,6 @@ require (
 	github.com/t-yuki/gocover-cobertura v0.0.0-20180217150009-aaee18c8195c // indirect
 	github.com/tdakkota/asciicheck v0.2.0 // indirect
 	github.com/tetafro/godot v1.4.11 // indirect
-	github.com/thoas/go-funk v0.9.1 // indirect
 	github.com/timakin/bodyclose v0.0.0-20221125081123-e39cf3fc478e // indirect
 	github.com/timonwong/loggercheck v0.9.4 // indirect
 	github.com/tomarrell/wrapcheck/v2 v2.8.1 // indirect
