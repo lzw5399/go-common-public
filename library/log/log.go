@@ -252,9 +252,9 @@ func appendContextFields(ctx context.Context, entry *Entry) *Entry {
 	// user info
 	userInfo := fcontext.UserInfoFromContext(ctx)
 	if userInfo != nil {
-		entry = entry.WithField("accountid", userInfo.AccountId)
+		entry = entry.WithField("userid", userInfo.UserId)
 		entry = entry.WithField("memberid", userInfo.MemberId)
-		entry = entry.WithField("organid", userInfo.OrganId)
+		entry = entry.WithField("orgid", userInfo.OrgId)
 		entry = entry.WithField("platform", userInfo.PlatForm)
 		entry = entry.WithField("isadmin", userInfo.IsAdmin)
 	}

@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"strings"
 
-	fconfig "github.com/lzw5399/go-common-public/library/config"
-	fcontext "github.com/lzw5399/go-common-public/library/context"
 	"gorm.io/gorm"
 	"gorm.io/gorm/callbacks"
 	"gorm.io/gorm/clause"
+
+	fconfig "github.com/lzw5399/go-common-public/library/config"
+	fcontext "github.com/lzw5399/go-common-public/library/context"
 )
 
 type TenantPlugin struct {
@@ -134,17 +135,17 @@ func (i *TenantPlugin) injectBefore(db *gorm.DB, op string) {
 		return
 	}
 
-	if currentUser.OrganId == "" {
+	if currentUser.OrgId == 0 {
 		return
 	}
 
-	tenantWhereExpr := fmt.Sprintf("%s.organ_id = ?", db.Statement.Table)
+	tenantWhereExpr := fmt.Sprintf("%s.org_id = ?", db.Statement.Table)
 
 	// 获取到 where 子句的expression对象
 	cs, ok := db.Statement.Clauses["WHERE"]
 	if !ok {
 		// 如果没有where子句，则直接添加租户where条件
-		db.Where(tenantWhereExpr, currentUser.OrganId)
+		db.Where(tenantWhereExpr, currentUser.OrgId)
 		return
 	}
 
@@ -167,18 +168,18 @@ func (i *TenantPlugin) injectBefore(db *gorm.DB, op string) {
 			continue
 		}
 
-		// 判断是否包含organ_id条件，包含则直接返回
+		// 判断是否包含org_id条件，包含则直接返回
 		sql := strings.ToLower(clauseExpr.SQL)
-		if strings.Contains(sql, "organ_id") {
+		if strings.Contains(sql, "org_id") {
 			return
 		}
 	}
 
-	// 将organ_id prepend 到sql的 where 子句中, 方便命中索引
+	// 将org_id prepend 到sql的 where 子句中, 方便命中索引
 	tenantFilterExprs := make([]clause.Expression, 0, len(where.Exprs)+1)
 	tenantFilterExprs = append(tenantFilterExprs, clause.AndConditions{
 		Exprs: []clause.Expression{
-			gorm.Expr(tenantWhereExpr, currentUser.OrganId),
+			gorm.Expr(tenantWhereExpr, currentUser.OrgId),
 		},
 	})
 
