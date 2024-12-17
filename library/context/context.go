@@ -12,11 +12,11 @@ import (
 )
 
 type UserInfo struct {
-	PlatForm  fpb.Platform `json:"platform"`  // 当前用户是开发端用户还是运营端用户
-	IsAdmin   bool         `json:"isAdmin"`   // 是否是管理员。对于开发端用户来说是否是组织管理员, 对于运营端用户来说是否是超级管理员
-	AccountId string       `json:"accountId"` // dev_account 或者 oper_account 表的 id
-	OrganId   string       `json:"organId"`   // dev_organ 或者 oper_organ 表的 id
-	MemberId  string       `json:"memberId"`  // member 表的 id
+	PlatForm fpb.Platform `json:"platform"` // 当前用户是开发端用户还是运营端用户
+	IsAdmin  bool         `json:"isAdmin"`  // 是否是管理员。对于开发端用户来说是否是组织管理员, 对于运营端用户来说是否是超级管理员
+	UserId   int64        `json:"userId"`   // dev_account 或者 oper_account 表的 id
+	OrgId    int64        `json:"orgId"`    // dev_organ 或者 oper_organ 表的 id
+	MemberId int64        `json:"memberId"` // member 表的 id
 }
 
 func UserInfoWithContext(ctx context.Context, userInfo *UserInfo) context.Context {
