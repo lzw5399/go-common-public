@@ -8,15 +8,21 @@ import (
 
 	fconfig "github.com/lzw5399/go-common-public/library/config"
 	"github.com/lzw5399/go-common-public/library/i18n"
-	fpb "github.com/lzw5399/go-common-public/library/pb"
+)
+
+type Platform string
+
+const (
+	PLATFORM_CLIENT Platform = "client" // 用户端
+	PLATFORM_OPS    Platform = "ops"    // 运营端
 )
 
 type UserInfo struct {
-	PlatForm fpb.Platform `json:"platform"` // 当前用户是开发端用户还是运营端用户
-	IsAdmin  bool         `json:"isAdmin"`  // 是否是管理员。对于开发端用户来说是否是组织管理员, 对于运营端用户来说是否是超级管理员
-	UserId   int64        `json:"userId"`   // dev_account 或者 oper_account 表的 id
-	OrgId    int64        `json:"orgId"`    // dev_organ 或者 oper_organ 表的 id
-	MemberId int64        `json:"memberId"` // member 表的 id
+	PlatForm Platform `json:"platform"` // 当前用户是「用户端」还是「运营端」
+	IsAdmin  bool     `json:"isAdmin"`  // 是否是管理员。目前暂时只有「运营端」有管理员
+	UserId   int64    `json:"userId"`   // dev_account 或者 oper_account 表的 id
+	OrgId    int64    `json:"orgId"`    // dev_organ 或者 oper_organ 表的 id
+	MemberId int64    `json:"memberId"` // member 表的 id
 }
 
 func UserInfoWithContext(ctx context.Context, userInfo *UserInfo) context.Context {
