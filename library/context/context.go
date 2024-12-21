@@ -13,8 +13,9 @@ import (
 type Platform string
 
 const (
-	PLATFORM_CLIENT Platform = "client" // 用户端
-	PLATFORM_OPS    Platform = "ops"    // 运营端
+	PLATFORM_UNKNOWN Platform = "unknown"
+	PLATFORM_CLIENT  Platform = "client" // 用户端
+	PLATFORM_OPS     Platform = "ops"    // 运营端
 )
 
 type UserInfo struct {
