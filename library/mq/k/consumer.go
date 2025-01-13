@@ -10,9 +10,9 @@ import (
 
 	"github.com/Shopify/sarama"
 	cluster "github.com/bsm/sarama-cluster"
+
 	fconfig "github.com/lzw5399/go-common-public/library/config"
 	"github.com/lzw5399/go-common-public/library/log"
-	"github.com/lzw5399/go-common-public/library/trace"
 )
 
 type ConsumerCallbackHandler func(ctx context.Context, input []byte) error // 使用者需要自定义该回调函数实现体
@@ -63,8 +63,7 @@ func StartKClusterClient(kAddr, topic, group string, handler ConsumerCallbackHan
 		case msg, more := <-consumer.Messages():
 			if more {
 				func() {
-					span, ctx := trace.ApmClient().CreateKEntrySpan(context.Background(), msg.Topic, "handler", msg)
-					defer span.End()
+					ctx := context.Background()
 					consumer.MarkOffset(msg, "")
 					log.Debugf("Message claimed: value = %s, timestamp = %v, topic = %s", string(msg.Value), msg.Timestamp, msg.Topic)
 					if err := handler(ctx, msg.Value); err != nil {

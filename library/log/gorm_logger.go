@@ -6,10 +6,11 @@ import (
 	"strconv"
 	"time"
 
-	fconfig "github.com/lzw5399/go-common-public/library/config"
 	"github.com/pkg/errors"
 	gormLogger "gorm.io/gorm/logger"
 	"gorm.io/gorm/utils"
+
+	fconfig "github.com/lzw5399/go-common-public/library/config"
 )
 
 type GormJsonLogger struct {

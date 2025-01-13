@@ -19,6 +19,7 @@ import (
 	fcontext "github.com/lzw5399/go-common-public/library/context"
 	ferrors "github.com/lzw5399/go-common-public/library/errors"
 	"github.com/lzw5399/go-common-public/library/i18n"
+	loghooks "github.com/lzw5399/go-common-public/library/log/hooks"
 )
 
 var defaultLogger *Logger
@@ -36,6 +37,9 @@ func New() (*Logger, error) {
 	l.ReportCaller = true
 	l.Level = getModeByStr(cfg.LogMode)
 	l.SetReportCaller(false)
+
+	var writers []io.Writer
+	writers = append(writers, os.Stdout)
 
 	if cfg.EnableFileOutput {
 		// 检测路径是否存在
@@ -62,7 +66,7 @@ func New() (*Logger, error) {
 			return path.Join(cfg.LogFolderPath, logFile)
 		}
 
-		multiWriter := io.MultiWriter(os.Stdout, &lumberjack.Logger{
+		writers = append(writers, &lumberjack.Logger{
 			Filename:   getFileName(),      // 日志文件位置
 			MaxSize:    cfg.LogMaxSize,     // 单文件最大容量,单位是MB
 			MaxBackups: cfg.LogMaxBackups,  // 最大保留过期文件个数
@@ -70,9 +74,9 @@ func New() (*Logger, error) {
 			Compress:   cfg.LogCompress,    // 是否需要压缩滚动日志, 使用的 gzip 压缩
 			LocalTime:  true,
 		})
-
-		l.SetOutput(multiWriter)
 	}
+
+	l.SetOutput(io.MultiWriter(writers...))
 
 	logger := &Logger{
 		appId:            cfg.ServerName,
@@ -81,6 +85,11 @@ func New() (*Logger, error) {
 		level:            cfg.LogMode,
 		parseSvrRspInfoAndDowngrade400SerialError: cfg.ParseSvrRspInfoAndDowngrade400SerialError,
 		Logger: l,
+	}
+
+	// Initialize CLS hook if enabled
+	if cfg.EnableCLS {
+		l.AddHook(loghooks.NewTencentCLSHook())
 	}
 
 	return logger, nil
@@ -122,116 +131,6 @@ type Logger struct {
 	*logrus.Logger
 }
 
-func (l *Logger) Tracef(format string, args ...interface{}) {
-	tracef(newEntryWithEnv(l), format, args...)
-}
-
-func (l *Logger) Tracec(ctx context.Context, format string, args ...interface{}) {
-	tracec(ctx, newEntryWithEnv(l), format, args...)
-}
-
-func (l *Logger) Debugf(format string, args ...interface{}) {
-	debugf(newEntryWithEnv(l), format, args...)
-}
-
-func (l *Logger) Debugc(ctx context.Context, format string, args ...interface{}) {
-	debugc(ctx, newEntryWithEnv(l), format, args...)
-}
-
-func (l *Logger) Infof(format string, args ...interface{}) {
-	infof(newEntryWithEnv(l), format, args...)
-}
-
-func (l *Logger) Infoc(ctx context.Context, format string, args ...interface{}) {
-	infoc(ctx, newEntryWithEnv(l), format, args...)
-}
-
-func (l *Logger) Warnf(format string, args ...interface{}) {
-	warnf(newEntryWithEnv(l), format, args...)
-}
-
-func (l *Logger) Warnc(ctx context.Context, format string, args ...interface{}) {
-	warnc(ctx, newEntryWithEnv(l), format, args...)
-}
-
-func (l *Logger) Errorf(format string, args ...interface{}) {
-	if l.parseSvrRspInfoAndDowngrade400SerialError && checkShouldDowngrade(args...) {
-		warnf(newEntryWithEnv(l), format, args...)
-		return
-	}
-	errorf(newEntryWithEnv(l), format, args...)
-}
-
-func (l *Logger) Errorc(ctx context.Context, format string, args ...interface{}) {
-	errorc(ctx, newEntryWithEnv(l), format, args...)
-}
-
-func (l *Logger) Fatalf(format string, args ...interface{}) {
-	fatalf(newEntryWithEnv(l), format, args...)
-}
-
-func (l *Logger) Fatalc(ctx context.Context, format string, args ...interface{}) {
-	fatalc(ctx, newEntryWithEnv(l), format, args...)
-}
-
-func (l *Logger) WithField(key string, value interface{}) *Entry {
-	entry := newEntryWithEnv(l)
-	return entry.WithField(key, value)
-}
-
-func (l *Logger) WithFields(fields logrus.Fields) *Entry {
-	entry := newEntryWithEnv(l)
-	return entry.WithFields(fields)
-}
-
-func Tracef(format string, args ...interface{}) {
-	tracef(newEntryWithEnv(defaultLogger), format, args...)
-}
-
-func Tracec(ctx context.Context, format string, args ...interface{}) {
-	tracec(ctx, newEntryWithEnv(defaultLogger), format, args...)
-}
-
-func Debugf(format string, args ...interface{}) {
-	debugf(newEntryWithEnv(defaultLogger), format, args...)
-}
-
-func Debugc(ctx context.Context, format string, args ...interface{}) {
-	debugc(ctx, newEntryWithEnv(defaultLogger), format, args...)
-}
-
-func Infof(format string, args ...interface{}) {
-	infof(newEntryWithEnv(defaultLogger), format, args...)
-}
-
-func Infoc(ctx context.Context, format string, args ...interface{}) {
-	infoc(ctx, newEntryWithEnv(defaultLogger), format, args...)
-}
-
-func Warnf(format string, args ...interface{}) {
-	warnf(newEntryWithEnv(defaultLogger), format, args...)
-}
-
-func Warnc(ctx context.Context, format string, args ...interface{}) {
-	warnc(ctx, newEntryWithEnv(defaultLogger), format, args...)
-}
-
-func Errorf(format string, args ...interface{}) {
-	errorf(newEntryWithEnv(defaultLogger), format, args...)
-}
-
-func Errorc(ctx context.Context, format string, args ...interface{}) {
-	errorc(ctx, newEntryWithEnv(defaultLogger), format, args...)
-}
-
-func Fatalf(format string, args ...interface{}) {
-	fatalf(newEntryWithEnv(defaultLogger), format, args...)
-}
-
-func Fatalc(ctx context.Context, format string, args ...interface{}) {
-	fatalc(ctx, newEntryWithEnv(defaultLogger), format, args...)
-}
-
 func appendContextFields(ctx context.Context, entry *Entry) *Entry {
 	if ctx == nil {
 		return entry
@@ -255,7 +154,7 @@ func appendContextFields(ctx context.Context, entry *Entry) *Entry {
 		entry = entry.WithField("userid", userInfo.UserId)
 		entry = entry.WithField("memberid", userInfo.MemberId)
 		entry = entry.WithField("orgid", userInfo.OrgId)
-		entry = entry.WithField("platform", userInfo.PlatForm)
+		entry = entry.WithField("platform", string(userInfo.PlatForm))
 		entry = entry.WithField("isadmin", userInfo.IsAdmin)
 	}
 
@@ -425,4 +324,114 @@ func newEntryWithEnv(l *Logger) *Entry {
 		Entry: entry,
 		parseSvrRspInfoAndDowngrade400SerialError: l.parseSvrRspInfoAndDowngrade400SerialError,
 	}
+}
+
+func (l *Logger) Tracef(format string, args ...interface{}) {
+	tracef(newEntryWithEnv(l), format, args...)
+}
+
+func (l *Logger) Tracec(ctx context.Context, format string, args ...interface{}) {
+	tracec(ctx, newEntryWithEnv(l), format, args...)
+}
+
+func (l *Logger) Debugf(format string, args ...interface{}) {
+	debugf(newEntryWithEnv(l), format, args...)
+}
+
+func (l *Logger) Debugc(ctx context.Context, format string, args ...interface{}) {
+	debugc(ctx, newEntryWithEnv(l), format, args...)
+}
+
+func (l *Logger) Infof(format string, args ...interface{}) {
+	infof(newEntryWithEnv(l), format, args...)
+}
+
+func (l *Logger) Infoc(ctx context.Context, format string, args ...interface{}) {
+	infoc(ctx, newEntryWithEnv(l), format, args...)
+}
+
+func (l *Logger) Warnf(format string, args ...interface{}) {
+	warnf(newEntryWithEnv(l), format, args...)
+}
+
+func (l *Logger) Warnc(ctx context.Context, format string, args ...interface{}) {
+	warnc(ctx, newEntryWithEnv(l), format, args...)
+}
+
+func (l *Logger) Errorf(format string, args ...interface{}) {
+	if l.parseSvrRspInfoAndDowngrade400SerialError && checkShouldDowngrade(args...) {
+		warnf(newEntryWithEnv(l), format, args...)
+		return
+	}
+	errorf(newEntryWithEnv(l), format, args...)
+}
+
+func (l *Logger) Errorc(ctx context.Context, format string, args ...interface{}) {
+	errorc(ctx, newEntryWithEnv(l), format, args...)
+}
+
+func (l *Logger) Fatalf(format string, args ...interface{}) {
+	fatalf(newEntryWithEnv(l), format, args...)
+}
+
+func (l *Logger) Fatalc(ctx context.Context, format string, args ...interface{}) {
+	fatalc(ctx, newEntryWithEnv(l), format, args...)
+}
+
+func (l *Logger) WithField(key string, value interface{}) *Entry {
+	entry := newEntryWithEnv(l)
+	return entry.WithField(key, value)
+}
+
+func (l *Logger) WithFields(fields logrus.Fields) *Entry {
+	entry := newEntryWithEnv(l)
+	return entry.WithFields(fields)
+}
+
+func Tracef(format string, args ...interface{}) {
+	tracef(newEntryWithEnv(defaultLogger), format, args...)
+}
+
+func Tracec(ctx context.Context, format string, args ...interface{}) {
+	tracec(ctx, newEntryWithEnv(defaultLogger), format, args...)
+}
+
+func Debugf(format string, args ...interface{}) {
+	debugf(newEntryWithEnv(defaultLogger), format, args...)
+}
+
+func Debugc(ctx context.Context, format string, args ...interface{}) {
+	debugc(ctx, newEntryWithEnv(defaultLogger), format, args...)
+}
+
+func Infof(format string, args ...interface{}) {
+	infof(newEntryWithEnv(defaultLogger), format, args...)
+}
+
+func Infoc(ctx context.Context, format string, args ...interface{}) {
+	infoc(ctx, newEntryWithEnv(defaultLogger), format, args...)
+}
+
+func Warnf(format string, args ...interface{}) {
+	warnf(newEntryWithEnv(defaultLogger), format, args...)
+}
+
+func Warnc(ctx context.Context, format string, args ...interface{}) {
+	warnc(ctx, newEntryWithEnv(defaultLogger), format, args...)
+}
+
+func Errorf(format string, args ...interface{}) {
+	errorf(newEntryWithEnv(defaultLogger), format, args...)
+}
+
+func Errorc(ctx context.Context, format string, args ...interface{}) {
+	errorc(ctx, newEntryWithEnv(defaultLogger), format, args...)
+}
+
+func Fatalf(format string, args ...interface{}) {
+	fatalf(newEntryWithEnv(defaultLogger), format, args...)
+}
+
+func Fatalc(ctx context.Context, format string, args ...interface{}) {
+	fatalc(ctx, newEntryWithEnv(defaultLogger), format, args...)
 }

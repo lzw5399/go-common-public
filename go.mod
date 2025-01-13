@@ -4,7 +4,6 @@ go 1.22
 
 require (
 	github.com/Shopify/sarama v1.24.1
-	github.com/SkyAPM/go2sky v0.5.0
 	github.com/alexmullins/zip v0.0.0-20180717182244-4affb64b04d0
 	github.com/alibabacloud-go/cdn-20180510 v1.1.2
 	github.com/alibabacloud-go/darabonba-openapi v0.2.1
@@ -32,6 +31,7 @@ require (
 	github.com/prometheus/client_golang v1.20.5
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.9.0
+	github.com/tencentcloud/tencentcloud-cls-sdk-go v1.0.11
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdn v1.0.911
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.911
 	github.com/tencentyun/cos-go-sdk-v5 v0.7.45
@@ -208,7 +208,7 @@ require (
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.8 // indirect
-	github.com/pierrec/lz4 v2.2.6+incompatible // indirect
+	github.com/pierrec/lz4 v2.6.1+incompatible // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/polyfloyd/go-errorlint v1.4.0 // indirect
 	github.com/prometheus/client_model v0.6.1 // indirect
@@ -260,7 +260,7 @@ require (
 	github.com/yagipy/maintidx v1.0.0 // indirect
 	github.com/yeya24/promlinter v0.2.0 // indirect
 	gitlab.com/bosi/decorder v0.2.3 // indirect
-	go.uber.org/atomic v1.7.0 // indirect
+	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
 	go.uber.org/zap v1.24.0 // indirect
 	golang.org/x/arch v0.3.0 // indirect

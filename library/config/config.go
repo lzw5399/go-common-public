@@ -106,6 +106,18 @@ type LogConfig struct {
 	LogCompress                               bool   `env:"LOG_COMPRESS" envDefault:"false" json:"LOG_COMPRESS"`                                                                        // 是否需要压缩滚动日志, 使用的 gzip 压缩
 	ParseSvrRspInfoAndDowngrade400SerialError bool   `env:"PARSE_SVR_RSP_INFO_AND_DOWNGRADE400_SERIAL_ERROR" envDefault:"true" json:"PARSE_SVR_RSP_INFO_AND_DOWNGRADE400_SERIAL_ERROR"` // 是否解析服务端返回的错误信息, 如果是 error 的 400系列code(400<=code<500), 则降级为warn级别
 
+	// CLS日志配置
+	EnableCLS          bool   `env:"ENABLE_CLS" envDefault:"false" json:"ENABLE_CLS"`                              // 是否开启CLS日志
+	CLSEndpoint        string `env:"CLS_ENDPOINT" envDefault:"ap-guangzhou.cls.tencentcs.com" json:"CLS_ENDPOINT"` // CLS服务地址
+	CLSTopicID         string `env:"CLS_TOPIC_ID" envDefault:"" json:"CLS_TOPIC_ID"`                               // CLS主题ID
+	CLSAccessKeyID     string `env:"CLS_ACCESS_KEY_ID" envDefault:"" json:"CLS_ACCESS_KEY_ID"`                     // CLS访问密钥ID
+	CLSAccessKeySecret string `env:"CLS_ACCESS_KEY_SECRET" envDefault:"" json:"CLS_ACCESS_KEY_SECRET"`             // CLS访问密钥Secret
+	CLSTotalSizeInMB   int64  `env:"CLS_TOTAL_SIZE_MB" envDefault:"100" json:"CLS_TOTAL_SIZE_MB"`                  // CLS实例缓存大小上限，单位MB
+	CLSMaxWorkerCount  int64  `env:"CLS_MAX_WORKER_COUNT" envDefault:"50" json:"CLS_MAX_WORKER_COUNT"`             // CLS最大并发goroutine数
+	CLSMaxBatchSize    int64  `env:"CLS_MAX_BATCH_SIZE" envDefault:"512" json:"CLS_MAX_BATCH_SIZE"`                // CLS单个Batch大小，单位KB
+	CLSMaxBatchCount   int    `env:"CLS_MAX_BATCH_COUNT" envDefault:"4096" json:"CLS_MAX_BATCH_COUNT"`             // CLS单个Batch最大日志条数
+	CLSLingerMs        int64  `env:"CLS_LINGER_MS" envDefault:"2000" json:"CLS_LINGER_MS"`                         // CLS发送间隔，单位毫秒
+
 	// Gorm日志配置
 	GormLogMode string `env:"GORM_LOG_MODE" envDefault:"warn" json:"GORM_LOG_MODE"`  // gorm日志级别, info 会打印输出sql。可选 silent, error, warn, info
 	GormLogJson bool   `env:"GORM_LOG_JSON" envDefault:"false" json:"GORM_LOG_JSON"` // gorm日志是否输出json
