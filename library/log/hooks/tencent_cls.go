@@ -156,6 +156,8 @@ func (h *TencentCLSHook) Fire(entry *logrus.Entry) error {
 	// Add the log message
 	fields["message"] = entry.Message
 
+	fields["level"] = entry.Level.String()
+
 	// Create CLS log
 	clsLog := cls.NewCLSLog(entry.Time.Unix(), fields)
 
