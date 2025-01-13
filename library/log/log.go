@@ -78,6 +78,10 @@ func New() (*Logger, error) {
 
 	l.SetOutput(io.MultiWriter(writers...))
 
+	if cfg.EnableCLS {
+		l.AddHook(loghooks.NewTencentCLSHook())
+	}
+
 	logger := &Logger{
 		appId:            cfg.ServerName,
 		env:              cfg.Env,
@@ -85,11 +89,6 @@ func New() (*Logger, error) {
 		level:            cfg.LogMode,
 		parseSvrRspInfoAndDowngrade400SerialError: cfg.ParseSvrRspInfoAndDowngrade400SerialError,
 		Logger: l,
-	}
-
-	// Initialize CLS hook if enabled
-	if cfg.EnableCLS {
-		l.AddHook(loghooks.NewTencentCLSHook())
 	}
 
 	return logger, nil
